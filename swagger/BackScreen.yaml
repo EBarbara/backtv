@@ -1,0 +1,40 @@
+swagger: "2.0"
+info:
+  description: API do sistema de telas do Ministério Público do Rio de Janeiro
+  version: "1.0.0"
+  title: Screen MPRJ
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+
+# Paths supported by the server application
+paths:
+  /orgaos:
+    get:
+      operationId: orgaos.read
+      tags:
+        - Órgãos
+      summary: Listagem dos órgãos
+      description: Lista os órgãos do MPRJ, que forem acessíveis pelo sistema
+      responses:
+        200:
+          description: Operação de listagem dos órgãos feita com sucesso
+          schema:
+            type: array
+            items:
+              properties:
+                CDORG:
+                  type: integer
+                CRAAI:
+                  type: string
+                COMARCA:
+                  type: string
+                FORO:
+                  type: string
+                ORGAO:
+                  type: string
+                TITULAR:
+                  type: string

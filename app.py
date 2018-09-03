@@ -1,12 +1,12 @@
-from flask import Flask
+from flask import render_template
+import connexion
 
-app = Flask(__name__)
+app = connexion.FlaskApp(__name__, specification_dir='swagger/')
+app.add_api('BackScreen.yaml')
+app.run(host='0.0.0.0', port=5000, debug=True)
 
 
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def home():
+    return render_template('home.html')
 
-
-if __name__ == '__main__':
-    app.run()
