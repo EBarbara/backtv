@@ -14,7 +14,7 @@ basePath: /api
 paths:
   /orgaos:
     get:
-      operationId: orgaos.read
+      operationId: orgaos.list_orgaos
       tags:
         - Órgãos
       summary: Listagem dos órgãos
@@ -38,3 +38,18 @@ paths:
                   type: string
                 TITULAR:
                   type: string
+
+  /clima:
+    get:
+      operationId: clima.read
+      tags:
+        - Clima
+      summary: BLANK
+      description: BLANK
+      responses:
+        200:
+          description: BLANK
+          schema:
+            properties:
+              temperature:
+                type: string
