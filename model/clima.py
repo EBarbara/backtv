@@ -1,8 +1,6 @@
 import requests
 from decouple import config
-
 from metar import Metar
-import urllib.request
 
 
 URL = "http://tgftp.nws.noaa.gov/data/observations/metar/stations/SBRJ.TXT"
@@ -11,6 +9,7 @@ proxyDict = {
     "http": config('HTTP_PROXY'),
     "https": config('HTTP_PROXY')
 }
+
 
 def read():
     contents = requests.get(URL, proxies=proxyDict).content.decode('UTF-8')

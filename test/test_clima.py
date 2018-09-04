@@ -4,6 +4,7 @@ from ..model.clima import (
     URL,
     read
 )
+from .fixtures import metar1
 
 
 class Clima(TestCase):
@@ -12,12 +13,12 @@ class Clima(TestCase):
         responses.add(
             responses.GET,
             URL,
-            json={"retorno": "yay"}
+            body=metar1
         )
 
         retorno = read()
 
         self.assertEqual(
             retorno,
-            {"temperature": "NULL"}
+            {"temperature": "26.0"}
         )
