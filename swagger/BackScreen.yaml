@@ -84,3 +84,32 @@ paths:
             properties:
               temperature:
                 type: string
+
+  /news:
+    get:
+      operationId: model.news.read
+      tags:
+        - news
+      summary: Feed de notícias
+      description: BLANK
+      responses:
+        200:
+          description: BLANK
+          schema:
+            type: array
+            items:
+              properties:
+                source:
+                  type: string
+                title:
+                  type: string
+                summary:
+                  type: string
+                href:
+                  type: string
+                published:
+                  type: string
+                published_parsed:
+                  type: array
+                  items:
+                    type: integer
