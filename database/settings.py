@@ -15,9 +15,3 @@ DS_EXADATA_CONN_SID = cx_Oracle.makedsn(
     DS_EXADATA_HOST,
     DS_EXADATA_PORT,
     service_name=DS_EXADATA_SN)
-
-DS_EXADATA_CONN_CSTR = 'oracle://{user}:{password}@{sid}'.format(
-    user=DS_EXADATA_user,
-    password=DS_EXADATA_password,
-    sid=DS_EXADATA_CONN_SID
-)
