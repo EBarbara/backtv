@@ -8,4 +8,3 @@ app.add_api('BackScreen.yaml', strict_validation=True)
 @app.route('/')
 def home():
     return render_template('home.html')
-
