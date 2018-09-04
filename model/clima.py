@@ -12,8 +12,7 @@ proxyDict = {
 def read():
     print(proxyDict)
     contents = requests.get(URL, proxies=proxyDict).content
-
-    print(contents)
+    del contents
     json = {
         "temperature": "NULL"
     }
