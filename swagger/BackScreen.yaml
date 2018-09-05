@@ -69,6 +69,36 @@ paths:
                   type: integer
                 MAIS_40:
                   type: integer
+  /orgaos/detalhes:
+    get:
+      operationId: model.orgaos.list_detalhes
+      parameters:
+        - name: cdorg
+          description: Código do órgão.
+          in: query
+          type: integer
+          required: true
+      tags:
+      - Órgãos
+      summary: Detalhes dos órgãos
+      description: Detalhes do órgão 
+      responses:
+        200:
+          description: Operação de listagem das vistas feita com sucesso
+          schema:
+            type: array
+            items:
+              properties:
+                TOTAL:
+                  type: integer
+                HOJE:
+                  type: integer
+                ATE_30:
+                  type: integer
+                DE_30_A_40:
+                  type: integer
+                MAIS_40:
+                  type: integer
 
   /clima:
     get:

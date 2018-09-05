@@ -83,7 +83,6 @@ def list_detalhes(cdorg):
     colunas = [c.strip() for c in colunas]
     data = [dict(zip(colunas, d)) for d in data]
     
-
     retorno = {
         "detalhes": {
             "MATRICULA": data[0]["MMPM_MATRICULA"],
@@ -108,19 +107,3 @@ def list_detalhes(cdorg):
     }
 
     return retorno
-
-#    results = []
-#    for row in data:
-#        results = { 
-#                "MMPM_MAPA_CRAAI": row[6]  
-#                }
-
-#    for row in data:
-#        row_dict = {
-#            'TOTAL': row[0],
-#            'HOJE': row[1],
-#            'ATE_30': row[2],
-#            'DE_30_A_40': row[3],
-#            'MAIS_40': row[4],
-#            }
-#        results.append(row_dict)

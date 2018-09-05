@@ -8,3 +8,7 @@ app.add_api('BackScreen.yaml', strict_validation=True)
 @app.route('/')
 def home():
     return render_template('home.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
