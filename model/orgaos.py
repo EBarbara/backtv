@@ -1,5 +1,13 @@
+import base64
+
 from database import DAO
-from .orgaos_sql import list_detalhes_query, list_orgaos_query, list_vistas_query
+from .orgaos_sql import (
+    acervo_qtd_query,
+    list_orgaos_query,
+    list_acervo_query,
+    list_detalhes_query,
+    list_vistas_query
+)
 
 
 def list_orgaos():
@@ -13,7 +21,7 @@ def list_orgaos():
             'FORO': row[3],
             'ORGAO': row[4],
             'TITULAR': row[5],
-            }
+        }
         results.append(row_dict)
     return results
 
@@ -28,41 +36,63 @@ def list_vistas(cdorg):
             'ATE_30': row[2],
             'DE_30_A_40': row[3],
             'MAIS_40': row[4],
-            }
+        }
         results.append(row_dict)
     return results
 
 
+def list_acervo(cdorg):
+    acervo = DAO.run(acervo_qtd_query, {'org': cdorg}).fetchone()[0]
+    meses = DAO.run(list_acervo_query, {'org': cdorg}).fetchall()
+
+    result = {"ACERVO_ATUAL": acervo}
+    historico = []
+    prev_acervo = acervo
+    for mes in meses:
+        acervo_fim_mes = prev_acervo
+        entradas = mes[1]
+        saidas = mes[2]
+        saldo = entradas - saidas
+        acervo_inicio_mes = acervo_fim_mes - saldo  # Olhando para trás
+
+        mes_dict = {
+            'MES': mes[0],
+            'ENTRADAS': entradas,
+            'SAIDAS': saidas,
+            'ACERVO_FIM_MES': acervo_fim_mes,
+            'SALDO': saldo,
+            'ACERVO_INICIO_MES': acervo_inicio_mes
+        }
+
+        historico.append(mes_dict)
+        prev_acervo = acervo_inicio_mes
+
+    result['HISTORICO'] = historico
+    return result
+
+
 def get_foto(cdmat):
-    #https://stackoverflow.com/questions/8875421/use-python-to-output-image-from-cx-oracle-blob
-    #http://127.0.0.1:5000/api/orgaos/detalhes?cdorg=200493
+    q = "select foto, nome_arq from RH.RH_FUNC_IMG where cdmatricula = {mat}"
+    data = DAO.run(q.format(mat=cdmat)).fetchall()
+    bs4_img = base64.b64encode(data[0][0].read()).decode()
+    return {"foto": bs4_img}
 
-    #data = DAO.run("select foto, nome_arq from RH.RH_FUNC_IMG where cdmatricula = :mat", {'mat': cdmat})
-    #conn = cx_Oracle.connect("*****","****",make_dsn_tns(get_config_string()))
-    #curs = conn.cursor()
-    #find photo
-    #document=curs.execute('select myblob from mytable where id=34234')
-    #row = cursor.fetchone()
-    #imageBlob = row[0]
 
-    #blob= imageBlob.read()
-    #response = make_response(blob)
-    #response.headers["Content-type"] = "image/jpeg"
-    #conn.close()
-
-    #return response
-    return {"foto":""}
-    
-
-def getDesignacao (arr):
+def get_designacao(arr):
     return [
-        (a['MMPM_MATRICULA'], a['MMPM_NOME'], a['MMPM_FUNCAO'], a['MMPM_DTINICIOSUBS'], a['MMPM_DTFIMSUBS'])
+        (
+            a['MMPM_MATRICULA'],
+            a['MMPM_NOME'],
+            a['MMPM_FUNCAO'],
+            a['MMPM_DTINICIOSUBS'],
+            a['MMPM_DTFIMSUBS']
+        )
         for a in arr
     ]
 
 
 def list_detalhes(cdorg):
-    data = list( DAO.run(list_detalhes_query, {'org': cdorg}) )
+    data = list(DAO.run(list_detalhes_query, {'org': cdorg}))
 
     colunas = """MMPM_ORDEM
                 MMPM_MAPA_CRAAI
@@ -103,7 +133,7 @@ def list_detalhes(cdorg):
 
     colunas = [c.strip() for c in colunas]
     data = [dict(zip(colunas, d)) for d in data]
-    
+
     retorno = {
         "detalhes": {
             "MATRICULA": data[0]["MMPM_MATRICULA"],
@@ -123,8 +153,9 @@ def list_detalhes(cdorg):
             "CELULAR": data[0]["MMPM_CELULAR"],
         },
         "funcoes": data[0]["MMPM_PGJ_FUNCAO"].split('@'),
-        "designacoes": getDesignacao(data[1:]),
-        "afastamento": data[0]["MMPM_AFASTAMENTO"].split('@') if data[0]["MMPM_AFASTAMENTO"] else []
+        "designacoes": get_designacao(data[1:]),
+        "afastamento": (data[0]["MMPM_AFASTAMENTO"].split('@')
+                        if data[0]["MMPM_AFASTAMENTO"] else [])
     }
 
     return retorno

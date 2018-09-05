@@ -50,11 +50,11 @@ paths:
           required: true
       tags:
       - Órgãos
-      summary: Listagem dos vistas abertas no órgão
-      description: Lista as vistas abertas do órgão selecionado, agrupadas por tempo de abertura
+      summary: Total dos vistas abertas no órgão
+      description: Exibe a contagem de vistas abertas do órgão selecionado, agrupadas por tempo de abertura
       responses:
         200:
-          description: Operação de listagem das vistas feita com sucesso
+          description: Operação de contagem das vistas feita com sucesso
           schema:
             type: array
             items:
@@ -69,6 +69,41 @@ paths:
                   type: integer
                 MAIS_40:
                   type: integer
+
+  /orgaos/acervo:
+    get:
+      operationId: model.orgaos.list_acervo
+      parameters:
+        - name: cdorg
+          description: Código do órgão.
+          in: query
+          type: integer
+          required: true
+      tags:
+      - Órgãos
+      summary: Total do acervo no órgão, classificado por mês
+      description: Exibe a contagem de documentos de que o órgão é responsável, agrupadas mês a mês
+      responses:
+        200:
+          description: Operação de contagem do acervo feita com sucesso
+          schema:
+            properties:
+                ACERVO_ATUAL:
+                  type: integer
+                HISTORICO:
+                  properties:
+                    MES:
+                      type: string
+                    ACERVO_INICIO_MES:
+                      type: integer
+                    ENTRADAS:
+                      type: integer
+                    SAIDAS:
+                      type: integer
+                    SALDO:
+                      type: integer
+                    ACERVO_FIM_MES:
+                      type: integer
 
   /orgaos/foto:
     get:
