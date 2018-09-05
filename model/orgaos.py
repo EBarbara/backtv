@@ -1,5 +1,7 @@
 import base64
 
+import pandas
+
 from database import DAO
 from .orgaos_sql import (
     acervo_qtd_query,
@@ -163,3 +165,45 @@ def list_detalhes(cdorg):
     }
 
     return retorno
+
+
+def financeiro(cdorg):
+    def to_float(val):
+        try:
+            return float(val.replace(',', '.'))
+        except ValueError:
+            return 0
+
+    def format_money(val):
+        try:
+            val = val.replace('R$', '').replace('.', '').replace(',', '.')
+            return float(val)
+        except ValueError:
+            return 0
+
+    consolidados = pandas.read_csv(
+        'model/sheets/consolidacao.csv', sep=';',
+        converters={'Total': format_money,
+                    'Área do Layout': to_float}
+    )
+    orgaos = pandas.read_csv('model/sheets/orgaos.csv', sep=';')
+    imoveis = pandas.read_csv('model/sheets/imoveis.csv', sep=';')
+    nome_promotoria = (
+        orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'].values[0]
+    )
+
+    df_orgao = (
+        consolidados[consolidados['Centro de Custos'] == nome_promotoria]
+    )
+    area_orgao = df_orgao['Área do Layout'].values[0]
+    custo = df_orgao['Total'].sum()
+    codigo_imovel = df_orgao['Código do Imóvel'].values[0]
+    natureza = (
+        imoveis[imoveis['CÓDIGO'] == codigo_imovel]['NATUREZA'].values[0]
+    )
+
+    return {
+        'custo_orgao': custo,
+        'area_orgao': area_orgao,
+        'natureza': natureza
+    }
