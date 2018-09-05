@@ -146,3 +146,29 @@ acervo_qtd_query = """
         and DOCU_ORGI_ORGA_DK_RESPONSAVEL = :org
     group by DOCU_ORGI_ORGA_DK_RESPONSAVEL
 """
+
+acervo_classe_pai_query = """
+    WITH docs AS (
+        SELECT
+            (
+                SELECT cls.cldc_dk cldc_dk_pai
+                FROM mcpr_classe_docto_mp cls
+                WHERE connect_by_isleaf = 1
+                    CONNECT BY PRIOR cls.cldc_cldc_dk_superior = cls.cldc_dk
+                    START WITH  d.docu_cldc_dk = cls.cldc_dk
+            ) AS cldc_dk_pai,
+            d.docu_dk
+        FROM mcpr_documento d
+        WHERE
+            d.docu_fsdc_dk = 1
+            AND DOCU_ORGI_ORGA_DK_RESPONSAVEL = :org
+    )
+    SELECT
+        cldc_dk_pai CLASSE_ID_PAI,
+        nvl(cldc_ds_classe, '* SEM CLASSE CADASTRADA *') CLASSE_PAI,
+        count(docu_dk) QTD
+    FROM docs
+    LEFT JOIN mcpr_classe_docto_mp ON cldc_dk = cldc_dk_pai
+    GROUP BY cldc_dk_pai, cldc_ds_classe
+    ORDER BY 3 DESC
+"""

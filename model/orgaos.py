@@ -6,8 +6,8 @@ from .orgaos_sql import (
     list_orgaos_query,
     list_acervo_query,
     list_detalhes_query,
-    list_vistas_query
-)
+    list_vistas_query,
+    acervo_classe_pai_query)
 
 
 def list_orgaos():
@@ -159,3 +159,16 @@ def list_detalhes(cdorg):
     }
 
     return retorno
+
+
+def list_acervo_classe_pai(cdorg):
+    data = DAO.run(acervo_classe_pai_query, {'org': cdorg})
+    results = []
+    for row in data:
+        row_dict = {
+            'CLASSE_ID_PAI': row[0],
+            'CLASSE_PAI': row[1],
+            'QTD': row[2]
+        }
+        results.append(row_dict)
+    return results
