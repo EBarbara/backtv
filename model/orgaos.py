@@ -176,6 +176,11 @@ def financeiro(cdorg):
     )
     orgaos = pandas.read_csv('model/sheets/orgaos.csv', sep=';')
     imoveis = pandas.read_csv('model/sheets/imoveis.csv', sep=';')
+
+    if orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'].values.size == 0:
+        return {}
+
+        
     nome_promotoria = (
         orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'].values[0]
     )
@@ -204,6 +209,10 @@ def financeiro_agrupado(cdorg):
                     'Área do Layout': to_float}
     )
     orgaos = pandas.read_csv('model/sheets/orgaos.csv', sep=';')
+    
+    if orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'].values.size == 0:
+        return {}
+    
     nome_promotoria = (
         orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'].values[0]
     )
