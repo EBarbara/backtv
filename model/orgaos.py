@@ -1,3 +1,5 @@
+import base64
+
 from database import DAO
 from .orgaos_sql import (
     acervo_qtd_query,
@@ -6,9 +8,6 @@ from .orgaos_sql import (
     list_detalhes_query,
     list_vistas_query
 )
-
-
-# TRAVIS, EU ESTOU IMPORTANDO O FUCKING MÓDULO INTEIRO, ME DEIXE DAR IMPORT *
 
 
 def list_orgaos():
@@ -73,43 +72,21 @@ def list_acervo(cdorg):
 
 
 def get_foto(cdmat):
-    # https://stackoverflow.com/questions/8875421/
-    #   use-python-to-output-image-from-cx-oracle-blob
-    # http://127.0.0.1:5000/api/orgaos/detalhes?cdorg=200493
-
-    # data = DAO.run("select foto, nome_arq
-    #   from RH.RH_FUNC_IMG
-    #   where cdmatricula = :mat",
-    #               {'mat': cdmat})
-    # conn = cx_Oracle.connect("*****",
-    #   "****",
-    #   make_dsn_tns(get_config_string()))
-    # curs = conn.cursor()
-    # find photo
-    # document=curs.execute('
-    #   select myblob
-    #   from mytable
-    #   where id=34234')
-    # row = cursor.fetchone()
-    # imageBlob = row[0]
-
-    # blob= imageBlob.read()
-    # response = make_response(blob)
-    # response.headers["Content-type"] =
-    #   "image/jpeg"
-    # conn.close()
-
-    # return response
-    return {"foto": ""}
+    q = "select foto, nome_arq from RH.RH_FUNC_IMG where cdmatricula = {mat}"
+    data = DAO.run(q.format(mat=cdmat)).fetchall()
+    bs4_img = base64.b64encode(data[0][0].read()).decode()
+    return {"foto": bs4_img}
 
 
-def getDesignacao(arr):
+def get_designacao(arr):
     return [
-        (a['MMPM_MATRICULA'],
-         a['MMPM_NOME'],
-         a['MMPM_FUNCAO'],
-         a['MMPM_DTINICIOSUBS'],
-         a['MMPM_DTFIMSUBS'])
+        (
+            a['MMPM_MATRICULA'],
+            a['MMPM_NOME'],
+            a['MMPM_FUNCAO'],
+            a['MMPM_DTINICIOSUBS'],
+            a['MMPM_DTFIMSUBS']
+        )
         for a in arr
     ]
 
@@ -176,11 +153,9 @@ def list_detalhes(cdorg):
             "CELULAR": data[0]["MMPM_CELULAR"],
         },
         "funcoes": data[0]["MMPM_PGJ_FUNCAO"].split('@'),
-        "designacoes": getDesignacao(data[1:]),
-        "afastamento": data[0]["MMPM_AFASTAMENTO"].split('@')
-
-        if data[0]["MMPM_AFASTAMENTO"]
-        else []
+        "designacoes": get_designacao(data[1:]),
+        "afastamento": (data[0]["MMPM_AFASTAMENTO"].split('@')
+                        if data[0]["MMPM_AFASTAMENTO"] else [])
     }
 
     return retorno
