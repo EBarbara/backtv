@@ -1,3 +1,5 @@
+import base64
+
 from database import DAO
 from .orgaos_sql import list_detalhes_query, list_orgaos_query, list_vistas_query
 
@@ -34,25 +36,11 @@ def list_vistas(cdorg):
 
 
 def get_foto(cdmat):
-    #https://stackoverflow.com/questions/8875421/use-python-to-output-image-from-cx-oracle-blob
-    #http://127.0.0.1:5000/api/orgaos/detalhes?cdorg=200493
+    q = "select foto, nome_arq from RH.RH_FUNC_IMG where cdmatricula = {mat}"
+    data = DAO.run(q.format(mat=cdmat)).fetchall()
+    bs4_img = base64.b64encode(data[0][0].read()).decode()
+    return {"foto": bs4_img}
 
-    #data = DAO.run("select foto, nome_arq from RH.RH_FUNC_IMG where cdmatricula = :mat", {'mat': cdmat})
-    #conn = cx_Oracle.connect("*****","****",make_dsn_tns(get_config_string()))
-    #curs = conn.cursor()
-    #find photo
-    #document=curs.execute('select myblob from mytable where id=34234')
-    #row = cursor.fetchone()
-    #imageBlob = row[0]
-
-    #blob= imageBlob.read()
-    #response = make_response(blob)
-    #response.headers["Content-type"] = "image/jpeg"
-    #conn.close()
-
-    #return response
-    return {"foto":""}
-    
 
 def getDesignacao (arr):
     return [
