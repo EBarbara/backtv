@@ -69,6 +69,30 @@ paths:
                   type: integer
                 MAIS_40:
                   type: integer
+
+  /orgaos/foto:
+    get:
+      operationId: model.orgaos.get_foto
+      parameters:
+        - name: cdmat
+          description: Matricula.
+          in: query
+          type: integer
+          required: true
+      tags:
+      - Órgãos
+      summary: Foto do Membro
+      description: Foto do Membro
+      responses:
+        200:
+          description: Operação de listagem das vistas feita com sucesso
+          schema:
+            type: string
+            items:
+              properties:
+                imagem:
+                  type: string
+
   /orgaos/detalhes:
     get:
       operationId: model.orgaos.list_detalhes
