@@ -1,5 +1,5 @@
 list_detalhes_query = """
-    select 
+    select
     MMPM_ORDEM,
     MMPM_MAPA_CRAAI,
     MMPM_MAPA_FORUM,
@@ -37,8 +37,8 @@ list_detalhes_query = """
     MMPM_CDORGAO
     from MMPS.MMPS_ADM_RH_MOV_PROM
     where mmpm_cdorgao = :org
-    order by MMPM_ORDEM, MMPM_ORDEMSUBSTITUCAO   
-""" 
+    order by MMPM_ORDEM, MMPM_ORDEMSUBSTITUCAO
+"""
 
 list_orgaos_query = """
     SELECT
@@ -104,34 +104,35 @@ list_vistas_query = """
 
 list_acervo_query = """
     WITH ENTRADAS AS(
-        SELECT 
+        SELECT
             TO_CHAR(HRDC_DT_INI_RESPONSABILIDADE, 'YYYY-MM') AS MES_ANO,
             COUNT(HRDC_DOCU_DK) AS entradas
         FROM MCPR.MCPR_HISTORICO_RESP_DOCUMENTO
         WHERE HRDC_ORGI_DK_RESP_DOC = :org
         GROUP BY TO_CHAR(HRDC_DT_INI_RESPONSABILIDADE, 'YYYY-MM')
     ), SAIDAS AS (
-        SELECT 
+        SELECT
             TO_CHAR(HRDC_DT_FIM_RESPONSABILIDADE, 'YYYY-MM') AS MES_ANO,
             COUNT(HRDC_DOCU_DK) AS SAIDAS
         FROM MCPR.MCPR_HISTORICO_RESP_DOCUMENTO
-        WHERE 
+        WHERE
             HRDC_DT_FIM_RESPONSABILIDADE IS NOT NULL
             AND HRDC_ORGI_DK_RESP_DOC = :org
         GROUP BY TO_CHAR(HRDC_DT_FIM_RESPONSABILIDADE, 'YYYY-MM')
         UNION ALL
-        SELECT 
+        SELECT
             TO_CHAR(HCFS_DT_INICIO, 'YYYY-MM') AS MES_ANO,
             COUNT(DOCU_DK) AS SAIDAS
-        FROM 
+        FROM
             MCPR_DOCUMENTO doc
-            JOIN MCPR.MCPR_HISTORICO_FASE_DOC fdc ON doc.DOCU_DK = fdc.HCFS_DOCU_DK
-        WHERE 
+            JOIN MCPR.MCPR_HISTORICO_FASE_DOC fdc
+                ON doc.DOCU_DK = fdc.HCFS_DOCU_DK
+        WHERE
             doc.DOCU_ORGI_ORGA_DK_RESPONSAVEL = :org
             AND HCFS_FSDC_DK = 2
         GROUP BY TO_CHAR(HCFS_DT_INICIO, 'YYYY-MM')
     )
-    SELECT ENTRADAS.MES_ANO, MAX(ENTRADAS), SUM(SAIDAS) 
+    SELECT ENTRADAS.MES_ANO, MAX(ENTRADAS), SUM(SAIDAS)
     FROM ENTRADAS JOIN SAIDAS ON ENTRADAS.MES_ANO = SAIDAS.MES_ANO
     GROUP BY ENTRADAS.MES_ANO
     ORDER BY MES_ANO DESC
@@ -140,7 +141,7 @@ list_acervo_query = """
 acervo_qtd_query = """
     select count(DOCU_DK) as acervo_atual
     from MCPR_DOCUMENTO
-    where 
+    where
         DOCU_FSDC_DK = 1
         and DOCU_ORGI_ORGA_DK_RESPONSAVEL = :org
     group by DOCU_ORGI_ORGA_DK_RESPONSAVEL
