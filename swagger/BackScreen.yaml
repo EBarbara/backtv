@@ -228,3 +228,31 @@ paths:
                   type: integer
                 NATUREZA:
                   type: string
+  /orgaos/financeiro/agrupado:
+    get:
+      operationId: model.orgaos.financeiro_agrupado
+      parameters:
+        - name: cdorg
+          description: Código do órgão.
+          in: query
+          type: integer
+          required: true
+      tags:
+      - Órgãos
+      summary: Total dos vistas abertas no órgão
+      description: Exibe a contagem de vistas abertas do órgão selecionado, agrupadas por tempo de abertura
+      responses:
+        200:
+          description: Operação de contagem das vistas feita com sucesso
+          schema:
+            type: array
+            items:
+              properties:
+                CONCESSIONARIAS:
+                  type: integer
+                IMOVEIS:
+                  type: integer
+                PESSOAL:
+                  type: integer
+                TERCEIRIZADOS:
+                  type: integer
