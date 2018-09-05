@@ -134,6 +134,10 @@ def list_detalhes(cdorg):
     colunas = [c.strip() for c in colunas]
     data = [dict(zip(colunas, d)) for d in data]
 
+    if not data:
+        return {}
+
+        
     retorno = {
         "detalhes": {
             "MATRICULA": data[0]["MMPM_MATRICULA"],
