@@ -1,7 +1,9 @@
 import base64
 
 from database import DAO
-from .orgaos_sql import list_detalhes_query, list_orgaos_query, list_vistas_query
+from .orgaos_sql import (list_detalhes_query,
+                         list_orgaos_query,
+                         list_vistas_query)
 
 
 def list_orgaos():
@@ -42,15 +44,21 @@ def get_foto(cdmat):
     return {"foto": bs4_img}
 
 
-def getDesignacao (arr):
+def get_designacao(arr):
     return [
-        (a['MMPM_MATRICULA'], a['MMPM_NOME'], a['MMPM_FUNCAO'], a['MMPM_DTINICIOSUBS'], a['MMPM_DTFIMSUBS'])
+        (
+            a['MMPM_MATRICULA'],
+            a['MMPM_NOME'],
+            a['MMPM_FUNCAO'],
+            a['MMPM_DTINICIOSUBS'],
+            a['MMPM_DTFIMSUBS']
+        )
         for a in arr
     ]
 
 
 def list_detalhes(cdorg):
-    data = list( DAO.run(list_detalhes_query, {'org': cdorg}) )
+    data = list(DAO.run(list_detalhes_query, {'org': cdorg}))
 
     colunas = """MMPM_ORDEM
                 MMPM_MAPA_CRAAI
@@ -91,7 +99,7 @@ def list_detalhes(cdorg):
 
     colunas = [c.strip() for c in colunas]
     data = [dict(zip(colunas, d)) for d in data]
-    
+
     retorno = {
         "detalhes": {
             "MATRICULA": data[0]["MMPM_MATRICULA"],
@@ -111,8 +119,9 @@ def list_detalhes(cdorg):
             "CELULAR": data[0]["MMPM_CELULAR"],
         },
         "funcoes": data[0]["MMPM_PGJ_FUNCAO"].split('@'),
-        "designacoes": getDesignacao(data[1:]),
-        "afastamento": data[0]["MMPM_AFASTAMENTO"].split('@') if data[0]["MMPM_AFASTAMENTO"] else []
+        "designacoes": get_designacao(data[1:]),
+        "afastamento": (data[0]["MMPM_AFASTAMENTO"].split('@')
+                        if data[0]["MMPM_AFASTAMENTO"] else [])
     }
 
     return retorno

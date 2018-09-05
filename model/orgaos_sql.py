@@ -1,5 +1,5 @@
 list_detalhes_query = """
-    select 
+    select
     MMPM_ORDEM,
     MMPM_MAPA_CRAAI,
     MMPM_MAPA_FORUM,
@@ -37,8 +37,8 @@ list_detalhes_query = """
     MMPM_CDORGAO
     from MMPS.MMPS_ADM_RH_MOV_PROM
     where mmpm_cdorgao = :org
-    order by MMPM_ORDEM, MMPM_ORDEMSUBSTITUCAO   
-""" 
+    order by MMPM_ORDEM, MMPM_ORDEMSUBSTITUCAO
+"""
 
 list_orgaos_query = """
     SELECT
