@@ -1,9 +1,13 @@
 import base64
 
 from database import DAO
-from .orgaos_sql import (list_detalhes_query,
-                         list_orgaos_query,
-                         list_vistas_query)
+from .orgaos_sql import (
+    acervo_qtd_query,
+    list_orgaos_query,
+    list_acervo_query,
+    list_detalhes_query,
+    list_vistas_query
+)
 
 
 def list_orgaos():
@@ -17,7 +21,7 @@ def list_orgaos():
             'FORO': row[3],
             'ORGAO': row[4],
             'TITULAR': row[5],
-            }
+        }
         results.append(row_dict)
     return results
 
@@ -32,9 +36,39 @@ def list_vistas(cdorg):
             'ATE_30': row[2],
             'DE_30_A_40': row[3],
             'MAIS_40': row[4],
-            }
+        }
         results.append(row_dict)
     return results
+
+
+def list_acervo(cdorg):
+    acervo = DAO.run(acervo_qtd_query, {'org': cdorg}).fetchone()[0]
+    meses = DAO.run(list_acervo_query, {'org': cdorg}).fetchall()
+
+    result = {"ACERVO_ATUAL": acervo}
+    historico = []
+    prev_acervo = acervo
+    for mes in meses:
+        acervo_fim_mes = prev_acervo
+        entradas = mes[1]
+        saidas = mes[2]
+        saldo = entradas - saidas
+        acervo_inicio_mes = acervo_fim_mes - saldo  # Olhando para trás
+
+        mes_dict = {
+            'MES': mes[0],
+            'ENTRADAS': entradas,
+            'SAIDAS': saidas,
+            'ACERVO_FIM_MES': acervo_fim_mes,
+            'SALDO': saldo,
+            'ACERVO_INICIO_MES': acervo_inicio_mes
+        }
+
+        historico.append(mes_dict)
+        prev_acervo = acervo_inicio_mes
+
+    result['HISTORICO'] = historico
+    return result
 
 
 def get_foto(cdmat):
