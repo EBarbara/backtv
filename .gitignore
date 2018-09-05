@@ -112,3 +112,6 @@ dmypy.json
 .env
 venv
 settings.ini
+
+# Jetbrains system files
+.idea/
