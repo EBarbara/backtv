@@ -14,6 +14,7 @@ Jinja2==2.10
 jsonschema==2.6.0
 MarkupSafe==1.0
 metar==1.6.0
+pandas==0.23.4
 python-decouple==3.1
 PyYAML==3.13
 requests==2.19.1
@@ -22,3 +23,4 @@ swagger-spec-validator==2.4.0
 urllib3==1.23
 waitress==1.1.0
 Werkzeug==0.14.1
+xlrd==1.1.0
