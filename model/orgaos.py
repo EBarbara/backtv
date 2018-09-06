@@ -9,7 +9,8 @@ from .orgaos_sql import (
     list_acervo_query,
     list_detalhes_query,
     list_vistas_query,
-    acervo_classe_pai_query)
+    acervo_classe_pai_query,
+    foto_mat_query)
 
 
 def list_orgaos():
@@ -74,9 +75,8 @@ def list_acervo(cdorg):
 
 
 def get_foto(cdmat):
-    q = "select foto, nome_arq from RH.RH_FUNC_IMG where cdmatricula = {mat}"
-    data = DAO.run(q.format(mat=cdmat)).fetchall()
-    bs4_img = base64.b64encode(data[0][0].read()).decode()
+    data = DAO.run(foto_mat_query, {"mat": cdmat}).fetchone()
+    bs4_img = base64.b64encode(data[0].read()).decode()
     return {"foto": bs4_img}
 
 
@@ -189,7 +189,8 @@ def financeiro(cdorg):
     orgaos = pandas.read_csv('model/sheets/orgaos.csv', sep=';')
     imoveis = pandas.read_csv('model/sheets/imoveis.csv', sep=';')
     nome_promotoria = (
-        orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'].values[0]
+        orgaos[orgaos['Código do Órgão'] == cdorg]
+              ['Nome do Órgão'].values[0]
     )
 
     df_orgao = (

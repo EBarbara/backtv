@@ -172,3 +172,7 @@ acervo_classe_pai_query = """
     GROUP BY cldc_dk_pai, cldc_ds_classe
     ORDER BY 3 DESC
 """
+
+foto_mat_query = """
+    SELECT foto, nome_arq FROM RH.RH_FUNC_IMG WHERE cdmatricula = :mat
+"""
