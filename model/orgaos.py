@@ -139,7 +139,6 @@ def list_detalhes(cdorg):
     if not data:
         return {}
 
-        
     retorno = {
         "detalhes": {
             "MATRICULA": data[0]["MMPM_MATRICULA"],
@@ -179,7 +178,7 @@ def list_acervo_classe_pai(cdorg):
         results.append(row_dict)
     return results
 
-  
+
 def financeiro(cdorg):
 
     consolidados = pandas.read_csv(
