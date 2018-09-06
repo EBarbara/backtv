@@ -159,6 +159,33 @@ paths:
                 MAIS_40:
                   type: integer
 
+  /orgaos/acervoClassePai:
+    get:
+      operationId: model.orgaos.list_acervo_classe_pai
+      parameters:
+        - name: cdorg
+          description: Código do órgão.
+          in: query
+          type: integer
+          required: true
+      tags:
+      - Órgãos
+      summary: Acervo do órgão
+      description: Acervo de documentos do órgão, classificado por classe
+      responses:
+        200:
+          description: Operação de listagem de acervo feita com sucesso
+          schema:
+            type: array
+            items:
+              properties:
+                CLASSE_ID_PAI:
+                  type: string
+                CLASSE_PAI:
+                  type: string
+                QTD:
+                  type: integer
+
   /clima:
     get:
       operationId: model.clima.read

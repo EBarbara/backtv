@@ -8,8 +8,9 @@ from .orgaos_sql import (
     list_orgaos_query,
     list_acervo_query,
     list_detalhes_query,
-    list_vistas_query
-)
+    list_vistas_query,
+    acervo_classe_pai_query,
+    foto_mat_query)
 
 
 def list_orgaos():
@@ -74,9 +75,8 @@ def list_acervo(cdorg):
 
 
 def get_foto(cdmat):
-    q = "select foto, nome_arq from RH.RH_FUNC_IMG where cdmatricula = {mat}"
-    data = DAO.run(q.format(mat=cdmat)).fetchall()
-    bs4_img = base64.b64encode(data[0][0].read()).decode()
+    data = DAO.run(foto_mat_query, {"mat": cdmat}).fetchone()
+    bs4_img = base64.b64encode(data[0].read()).decode()
     return {"foto": bs4_img}
 
 
@@ -166,6 +166,19 @@ def list_detalhes(cdorg):
     return retorno
 
 
+def list_acervo_classe_pai(cdorg):
+    data = DAO.run(acervo_classe_pai_query, {'org': cdorg})
+    results = []
+    for row in data:
+        row_dict = {
+            'CLASSE_ID_PAI': row[0],
+            'CLASSE_PAI': row[1],
+            'QTD': row[2]
+        }
+        results.append(row_dict)
+    return results
+
+
 def financeiro(cdorg):
 
     consolidados = pandas.read_csv(
@@ -181,7 +194,8 @@ def financeiro(cdorg):
         return {}
 
     nome_promotoria = (
-        orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'].values[0]
+        orgaos[orgaos['Código do Órgão'] == cdorg]
+              ['Nome do Órgão'].values[0]
     )
 
     df_orgao = (
