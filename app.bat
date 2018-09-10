@@ -1,1 +1,1 @@
-waitress-serve app:app
+waitress-serve url:app

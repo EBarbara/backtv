@@ -1,8 +1,6 @@
-from flask import render_template
-import connexion
+from flask import Flask, render_template
 
-app = connexion.FlaskApp(__name__, specification_dir='swagger/')
-app.add_api('BackScreen.yaml', strict_validation=True)
+app = Flask('back_tv')
 
 
 @app.route('/')

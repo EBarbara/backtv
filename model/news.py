@@ -3,13 +3,16 @@ import feedparser
 import json
 from operator import itemgetter
 
+from app import app
+
 proxyDict = {
     "http": config('HTTP_PROXY'),
     "https": config('HTTP_PROXY')
 }
 
 
-def read():
+@app.route("/api/news", methods=['GET'])
+def read_news():
     ebc = feedparser.parse(
         'http://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'
     )
