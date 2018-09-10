@@ -186,7 +186,7 @@ def list_acervo_classe():
 
 @app.route("/api/orgaos/financeiro", methods=['GET'])
 def financeiro():
-    cdorg = request.args.get('cdorg')
+    cdorg = int(request.args.get('cdorg'))
     consolidados = pandas.read_csv(
         'model/sheets/consolidacao.csv', sep=';',
         converters={'Total': format_money,
@@ -195,17 +195,16 @@ def financeiro():
     orgaos = pandas.read_csv('model/sheets/orgaos.csv', sep=';')
     imoveis = pandas.read_csv('model/sheets/imoveis.csv', sep=';')
 
-    if orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'] \
-            .values.size == 0:
-        return {}
-
     nome_promotoria = (
         orgaos[orgaos['Código do Órgão'] == cdorg]
-        ['Nome do Órgão'].values[0]
+        ['Nome do Órgão'].values
     )
 
+    if nome_promotoria.size == 0:
+        return {}
+
     df_orgao = (
-        consolidados[consolidados['Centro de Custos'] == nome_promotoria]
+        consolidados[consolidados['Centro de Custos'] == nome_promotoria[0]]
     )
     area_orgao = df_orgao['Área do Layout'].values[0]
     custo = df_orgao['Total'].sum()
@@ -221,7 +220,9 @@ def financeiro():
     })
 
 
-def financeiro_agrupado(cdorg):
+@app.route("/api/orgaos/financeiro/agrupado", methods=['GET'])
+def financeiro_agrupado():
+    cdorg = int(request.args.get('cdorg'))
     consolidados = pandas.read_csv(
         'model/sheets/consolidacao.csv', sep=';',
         converters={'Total': format_money,
@@ -241,7 +242,7 @@ def financeiro_agrupado(cdorg):
         consolidados[consolidados['Centro de Custos'] == nome_promotoria]
     )
 
-    return df_orgao.groupby('Tipo de Custo').Total.sum().to_dict()
+    return jsonify(df_orgao.groupby('Tipo de Custo').Total.sum().to_dict())
 
 
 def to_float(val):
