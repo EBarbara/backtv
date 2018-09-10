@@ -1,5 +1,3 @@
-from app import app
-
 from model.orgaos import (
     list_orgaos,
     list_vistas,
@@ -17,11 +15,11 @@ from model.clima import (
     read_clima
 )
 
-from model.news import(
+from model.news import (
     read_news
 )
 
-__all__=[
+__all__ = [
     'list_orgaos',
     'list_vistas',
     'list_acervo',

@@ -1,5 +1,3 @@
-import base64
-
 import pandas
 
 from flask import jsonify, request
@@ -11,8 +9,7 @@ from .orgaos_sql import (
     list_acervo_query,
     list_detalhes_query,
     list_vistas_query,
-    acervo_classe_pai_query,
-    foto_mat_query)
+    acervo_classe_pai_query)
 
 
 @app.route("/api/orgaos", methods=['GET'])
