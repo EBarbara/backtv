@@ -1,15 +1,16 @@
-from unittest import TestCase
+from unittest import TestCase, mock
 import responses
-from ..model.clima import (
+from model.clima import (
     URL,
     read_clima
 )
-from .fixtures import metar1
+from model.tests.fixtures import metar1
 
 
 class Clima(TestCase):
     @responses.activate
-    def test_read(self):
+    @mock.patch("model.clima.jsonify", return_value={"temperature": "26.0"})
+    def test_read(self, _jsonify):
         responses.add(
             responses.GET,
             URL,
