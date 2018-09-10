@@ -2,7 +2,7 @@ import base64
 
 import pandas
 
-from flask import jsonify
+from flask import jsonify, request
 from app import app
 from database import DAO
 from .orgaos_sql import (
@@ -32,7 +32,9 @@ def list_orgaos():
     return jsonify(results)
 
 
-def list_vistas(cdorg):
+@app.route("/api/orgaos/vistas", methods=['GET'])
+def list_vistas():
+    cdorg = request.args.get('cdorg')
     data = DAO.run(list_vistas_query, {'org': cdorg})
     results = []
     for row in data:
@@ -44,10 +46,12 @@ def list_vistas(cdorg):
             'MAIS_40': row[4],
         }
         results.append(row_dict)
-    return results
+    return jsonify(results)
 
 
-def list_acervo(cdorg):
+@app.route("/api/orgaos/acervo", methods=['GET'])
+def list_acervo():
+    cdorg = request.args.get('cdorg')
     acervo = DAO.run(acervo_qtd_query, {'org': cdorg}).fetchone()[0]
     meses = DAO.run(list_acervo_query, {'org': cdorg}).fetchall()
 
@@ -74,13 +78,7 @@ def list_acervo(cdorg):
         prev_acervo = acervo_inicio_mes
 
     result['HISTORICO'] = historico
-    return result
-
-
-def get_foto(cdmat):
-    data = DAO.run(foto_mat_query, {"mat": cdmat}).fetchone()
-    bs4_img = base64.b64encode(data[0].read()).decode()
-    return {"foto": bs4_img}
+    return jsonify(result)
 
 
 def get_designacao(arr):
@@ -96,7 +94,9 @@ def get_designacao(arr):
     ]
 
 
-def list_detalhes(cdorg):
+@app.route("/api/orgaos/detalhes", methods=['GET'])
+def list_detalhes():
+    cdorg = request.args.get('cdorg')
     data = list(DAO.run(list_detalhes_query, {'org': cdorg}))
 
     colunas = """MMPM_ORDEM
@@ -140,7 +140,7 @@ def list_detalhes(cdorg):
     data = [dict(zip(colunas, d)) for d in data]
 
     if not data:
-        return {}
+        return jsonify({})
 
     retorno = {
         "detalhes": {
@@ -166,10 +166,12 @@ def list_detalhes(cdorg):
                         if data[0]["MMPM_AFASTAMENTO"] else [])
     }
 
-    return retorno
+    return jsonify(retorno)
 
 
-def list_acervo_classe_pai(cdorg):
+@app.route("/api/orgaos/acervoClasse", methods=['GET'])
+def list_acervo_classe():
+    cdorg = request.args.get('cdorg')
     data = DAO.run(acervo_classe_pai_query, {'org': cdorg})
     results = []
     for row in data:
@@ -179,10 +181,12 @@ def list_acervo_classe_pai(cdorg):
             'QTD': row[2]
         }
         results.append(row_dict)
-    return results
+    return jsonify(results)
 
 
-def financeiro(cdorg):
+@app.route("/api/orgaos/financeiro", methods=['GET'])
+def financeiro():
+    cdorg = request.args.get('cdorg')
     consolidados = pandas.read_csv(
         'model/sheets/consolidacao.csv', sep=';',
         converters={'Total': format_money,
@@ -210,11 +214,11 @@ def financeiro(cdorg):
         imoveis[imoveis['CÓDIGO'] == codigo_imovel]['NATUREZA'].values[0]
     )
 
-    return {
+    return jsonify({
         'custo_orgao': custo,
         'area_orgao': area_orgao,
         'natureza': natureza
-    }
+    })
 
 
 def financeiro_agrupado(cdorg):
