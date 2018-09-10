@@ -2,6 +2,8 @@ import base64
 
 import pandas
 
+from flask import jsonify
+from app import app
 from database import DAO
 from .orgaos_sql import (
     acervo_qtd_query,
@@ -13,6 +15,7 @@ from .orgaos_sql import (
     foto_mat_query)
 
 
+@app.route("/api/orgaos", methods=['GET'])
 def list_orgaos():
     data = DAO.run(list_orgaos_query)
     results = []
@@ -26,7 +29,7 @@ def list_orgaos():
             'TITULAR': row[5],
         }
         results.append(row_dict)
-    return results
+    return jsonify(results)
 
 
 def list_vistas(cdorg):
@@ -180,7 +183,6 @@ def list_acervo_classe_pai(cdorg):
 
 
 def financeiro(cdorg):
-
     consolidados = pandas.read_csv(
         'model/sheets/consolidacao.csv', sep=';',
         converters={'Total': format_money,
@@ -189,13 +191,13 @@ def financeiro(cdorg):
     orgaos = pandas.read_csv('model/sheets/orgaos.csv', sep=';')
     imoveis = pandas.read_csv('model/sheets/imoveis.csv', sep=';')
 
-    if orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão']\
+    if orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'] \
             .values.size == 0:
         return {}
 
     nome_promotoria = (
         orgaos[orgaos['Código do Órgão'] == cdorg]
-              ['Nome do Órgão'].values[0]
+        ['Nome do Órgão'].values[0]
     )
 
     df_orgao = (
@@ -223,7 +225,7 @@ def financeiro_agrupado(cdorg):
     )
     orgaos = pandas.read_csv('model/sheets/orgaos.csv', sep=';')
 
-    if orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão']\
+    if orgaos[orgaos['Código do Órgão'] == cdorg]['Nome do Órgão'] \
             .values.size == 0:
         return {}
 
