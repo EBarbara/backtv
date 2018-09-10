@@ -2,7 +2,7 @@ from unittest import TestCase
 import responses
 from ..model.clima import (
     URL,
-    read
+    read_clima
 )
 from .fixtures import metar1
 
@@ -16,7 +16,7 @@ class Clima(TestCase):
             body=metar1
         )
 
-        retorno = read()
+        retorno = read_clima()
 
         self.assertEqual(
             retorno,
